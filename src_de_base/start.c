@@ -22,6 +22,26 @@ void kernel_start(void)
     ecrit_car(5,2,'g');
     efface_ecran();
     place_curseur(0,0);
+    uint32_t lig=0;
+    uint32_t col=0;
+    ecrit_car(lig,col,'p');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'u');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'t');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'a');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'j');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'o');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'r');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'j');
+    gerer_lig_col(1,&lig,&col);
+    ecrit_car(lig,col,'e');
+    gerer_lig_col(1,&lig,&col);
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur

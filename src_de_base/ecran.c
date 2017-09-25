@@ -29,22 +29,48 @@ void place_curseur(uint32_t lig, uint32_t col){
 	outb(haute,0x3D5);
 }
 void traite_car(char c){
-	switch (c){
-	case 8
-
+/*Hacer algo aqui despues*/
 	}
 
-}
-void gerer_lig_col(int option, uint32_t lig, uint32_t col){
-	switch option{
-	case 1
-		/*case dans le quel le curseur doit etre dans la ligne suivante ex: ecrit un caractère
-		 * */
-	case 3
-		/*Case dans le quel le curseur doit etre dans la cologne 0 de la ligne currente.
-		 * */
-	case 2
+
+void gerer_lig_col(int option, uint32_t *lig, uint32_t *col){
+	if (option==1){
+	
+	} 		
+	switch(option){
+		case 1:
+			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
+			 * */
+			if (*col<80){
+				*col=(*col)+1;
+			}
+			else{
+				*col=0;
+				*lig=(*lig)+1;
+			}
+			place_curseur((uint32_t)lig,(uint32_t)col);
+		case 2:
 		/* Case dans le quel le curseur doit reculer
+		 * 
 		 * */
+			break;
+		case 3:
+		/*Tabulación*/
+			break;
+		 
+		case 4: 
+			break;
+		/*Case dans le quel le curseur doit etre dans la ligne suivante*/
+		
+		case 5: 
+			break;
+		/*Case dans le quelle on efface l'ecran et on doit metre le punteur dans la ligne 0 cologne*/ 
+
+		case 6: 
+			break;
+		/*Ligne actuelle, Cologne 0*/
 	}
 }
+
+
+
