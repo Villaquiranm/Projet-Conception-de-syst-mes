@@ -23,8 +23,17 @@ void kernel_start(void)
     uint32_t lig=0;
     uint32_t col=0;
     efface_ecran();
-    ecrit_car(&lig,&col,'M');
-    ecrit_car(&lig,&col,'V');
+    traite_car('m',&lig,&col);
+    traite_car('\t',&lig,&col);
+    traite_car('i',&lig,&col);
+    traite_car('\t',&lig,&col);
+    traite_car('k',&lig,&col);
+    traite_car('\t',&lig,&col);
+    traite_car('e',&lig,&col);
+    traite_car('\n',&lig,&col);
+    traite_car('\r',&lig,&col);
+    traite_car('\f',&lig,&col);
+  //  traite_car('E',&lig,&col);
     // quand on saura gerer l'ecran, on pourra afficher x
     (void)x;
     // on ne doit jamais sortir de kernel_start

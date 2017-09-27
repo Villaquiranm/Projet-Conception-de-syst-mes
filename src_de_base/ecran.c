@@ -8,7 +8,6 @@ void ecrit_car(uint32_t *lig,uint32_t *col,char c){
 	uint16_t* ptr;
 	ptr=ptr_mem(*lig,*col);
 	*ptr=(0xf00u)|c;
-	gerer_lig_col(1,lig,col);
 }
 
 void efface_ecran (void){
@@ -32,8 +31,8 @@ void place_curseur(uint32_t lig, uint32_t col){
 	outb(0x0e,0x3D4);
 	outb(haute,0x3D5);
 }
-void gerer_lig_col(int option, uint32_t *lig, uint32_t *col){
-	switch(option){
+void traite_car(char c,uint32_t *lig,uint32_t *col){
+		switch(c){
 		case 1:
 			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
 			*/
@@ -45,25 +44,56 @@ void gerer_lig_col(int option, uint32_t *lig, uint32_t *col){
 				*lig=(*lig)+1;
 			}
 			place_curseur(*lig,*col);
-		case 2:
+			break;
+		case '\b':
 			/* Case dans le quel le curseur doit reculer
 			 * 		 * 
 	 		 * */				
+			if (*col==0){
+				*col=79;
+				*lig=*lig-1;
+			}
+			else{
+				*col=*col-1;
+			}
+			place_curseur(*lig,*col);
 			break;
-		case 3:									
+		case '\t':									
 			/*Tabulación*/
+			*col=8*((*col/8)+1);
+			place_curseur(*lig,*col);
 			break;
-		case 4: 
-			break;
+		case '\n': 
 			/*Case dans le quel le curseur doit etre dans la ligne suivante*/
-		case 5: 
+			*col=0;
+			*lig=*lig+1;
+			place_curseur(*lig,*col);
 			break;
+		case '\f': 
 			/*Case dans le quelle on efface l'ecran et on doit metre le punteur dans la ligne 0 cologne*/ 
-		case 6: 
+			*lig=0;
+			*col=0;
+			efface_ecran();
+			place_curseur(*lig,*col);
 			break;
+		case '\r': 
 			/*Ligne actuelle, Cologne 0*/
+			*col=0;
+			place_curseur(*lig,*col);
+			break;
+		default:
+			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
+			*/
+			if (*col<80){
+				*col=(*col)+1;
+			}
+			else{
+				*col=0;
+				*lig=(*lig)+1;
+			}
+			ecrit_car(lig,col,c);
+			place_curseur(*lig,*col+1);
 		}
 }
-
 
 
