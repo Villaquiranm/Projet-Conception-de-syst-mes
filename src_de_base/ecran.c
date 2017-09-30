@@ -1,5 +1,6 @@
 #include "ecran.h"
 #include <cpu.h>
+#include <string.h>
 
 uint16_t *ptr_mem (uint32_t lig, uint32_t col){
 	return (uint16_t*)( 0xB8000+2*(lig*80+col));
@@ -32,6 +33,7 @@ void place_curseur(uint32_t lig, uint32_t col){
 	outb(haute,0x3D5);
 }
 void traite_car(char c,uint32_t *lig,uint32_t *col){
+	uint32_t pos;
 		switch(c){
 		case 1:
 			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
@@ -60,7 +62,13 @@ void traite_car(char c,uint32_t *lig,uint32_t *col){
 			break;
 		case '\t':									
 			/*Tabulación*/
-			*col=8*((*col/8)+1);
+			pos=8*((*col/8)+1);
+			if (pos<80){
+				*col=pos;
+			}
+			else{
+			*col=79;
+			}
 			place_curseur(*lig,*col);
 			break;
 		case '\n': 
@@ -95,5 +103,11 @@ void traite_car(char c,uint32_t *lig,uint32_t *col){
 			place_curseur(*lig,*col+1);
 		}
 }
-
-
+void defilement(void){
+	memmove(ptr_mem(0,0),ptr_mem(1,0),(size_t)(24*80));	
+}
+void console_putbytes(char *chaine, int32_t taille, uint32_t *lig,uint32_t *col){
+	for (int i=0;i<taille;i++){
+		traite_car(chaine[i],lig,col);
+	}
+}
