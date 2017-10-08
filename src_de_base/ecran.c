@@ -1,13 +1,13 @@
 #include "ecran.h"
 #include <cpu.h>
 #include <string.h>
-
+uint32_t l=0,c=0;
 uint16_t *ptr_mem (uint32_t lig, uint32_t col){
 	return (uint16_t*)( 0xB8000+2*(lig*80+col));
 }
-void ecrit_car(uint32_t *lig,uint32_t *col,char c){
+void ecrit_car(uint32_t lig,uint32_t col,char c){
 	uint16_t* ptr;
-	ptr=ptr_mem(*lig,*col);
+	ptr=ptr_mem(lig,col);
 	*ptr=(0xf00u)|c;
 }
 
@@ -32,82 +32,82 @@ void place_curseur(uint32_t lig, uint32_t col){
 	outb(0x0e,0x3D4);
 	outb(haute,0x3D5);
 }
-void traite_car(char c,uint32_t *lig,uint32_t *col){
+void traite_car(char ca){
 	uint32_t pos;
-		switch(c){
+		switch(ca){
 		case 1:
 			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
 			*/
-			if (*col<80){
-				*col=(*col)+1;
+			if (c<80){
+				c=(c)+1;
 			}
 			else{
-				*col=0;
-				*lig=(*lig)+1;
+				c=0;
+				l=(l)+1;
 			}
-			place_curseur(*lig,*col);
+			place_curseur(l,c);
 			break;
 		case '\b':
 			/* Case dans le quel le curseur doit reculer
 			 * 		 * 
 	 		 * */				
-			if (*col==0){
-				*col=79;
-				*lig=*lig-1;
+			if (c==0){
+				c=79;
+				l=l-1;
 			}
 			else{
-				*col=*col-1;
+				c=c-1;
 			}
-			place_curseur(*lig,*col);
+			place_curseur(l,c);
 			break;
 		case '\t':									
 			/*Tabulación*/
-			pos=8*((*col/8)+1);
+			pos=8*((c/8)+1);
 			if (pos<80){
-				*col=pos;
+				c=pos;
 			}
 			else{
-			*col=79;
+			c=79;
 			}
-			place_curseur(*lig,*col);
+			place_curseur(l,c);
 			break;
 		case '\n': 
 			/*Case dans le quel le curseur doit etre dans la ligne suivante*/
-			*col=0;
-			*lig=*lig+1;
-			place_curseur(*lig,*col);
+			c=0;
+			l=l+1;
+			place_curseur(l,c);
 			break;
 		case '\f': 
 			/*Case dans le quelle on efface l'ecran et on doit metre le punteur dans la ligne 0 cologne*/ 
-			*lig=0;
-			*col=0;
+			l=0;
+			c=0;
 			efface_ecran();
-			place_curseur(*lig,*col);
+			place_curseur(l,c);
 			break;
 		case '\r': 
 			/*Ligne actuelle, Cologne 0*/
-			*col=0;
-			place_curseur(*lig,*col);
+			c=0;
+			place_curseur(l,c);
 			break;
 		default:
 			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
 			*/
-			if (*col<80){
-				*col=(*col)+1;
+			if (c<80){
+				c=(c)+1;
 			}
 			else{
-				*col=0;
-				*lig=(*lig)+1;
+				c=0;
+				l=(l)+1;
 			}
-			ecrit_car(lig,col,c);
-			place_curseur(*lig,*col+1);
+			ecrit_car(l,c,ca);
+			place_curseur(l,c+1);
 		}
 }
 void defilement(void){
 	memmove(ptr_mem(0,0),ptr_mem(1,0),(size_t)(24*80));	
 }
-void console_putbytes(char *chaine, int32_t taille, uint32_t *lig,uint32_t *col){
+void console_putbytes(char *chaine,int32_t taille){
 	for (int i=0;i<taille;i++){
-		traite_car(chaine[i],lig,col);
+		traite_car(chaine[i]);
 	}
 }

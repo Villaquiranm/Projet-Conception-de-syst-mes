@@ -19,14 +19,10 @@ uint32_t fact(uint32_t n)
 
 void kernel_start(void)
 {
-    uint32_t x = fact(5);
-    uint32_t lig=0;
-    uint32_t col=0;
     efface_ecran();
-    console_putbytes("Holis \n \n \t Holis",17,&lig,&col);
+    console_putbytes("Holis \n \n \t Holis",17);
 
     // quand on saura gerer l'ecran, on pourra afficher x
-    (void)x;
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur
