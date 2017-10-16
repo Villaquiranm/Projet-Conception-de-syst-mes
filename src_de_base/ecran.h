@@ -9,3 +9,4 @@ void place_curseur(uint32_t lig, uint32_t col);
 void traite_car(char c);
 void defilement(void);
 void console_putbytes(char *chaine, int32_t taille);
+void montrer(char *chaine,int32_t taille);

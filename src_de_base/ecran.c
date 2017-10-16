@@ -111,3 +111,8 @@ void console_putbytes(char *chaine,int32_t taille){
 		traite_car(chaine[i]);
 	}
 }
+void montrer(char *chaine,int32_t taille){
+	for (int i=0;i<taille;i++){
+		ecrit_car(0,71+i,chaine[i]);
+	}
+}
