@@ -28,6 +28,7 @@ void kernel_start(void)
     frequence();
     horloge();
     init_traitant_IT(32,traitant_IT_32);
+    idle();
 //    sti();
 
     // quand on saura gerer l'ecran, on pourra afficher x
