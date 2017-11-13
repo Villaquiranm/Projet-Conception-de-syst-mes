@@ -1,4 +1,5 @@
 #include "ecran.h"
+#include "processus.h"
 #include <string.h>
 #include <cpu.h>
 #include <segment.h>
@@ -13,6 +14,7 @@ void init_traitant_IT(int32_t num_IT, void (*traitant)(void)){
     ptr++;
     paroleb=(pos & 0xffff0000)|0x8e00;
     *ptr=paroleb;
+
 }
 //Aqui va lo que se ejecutará luego de cada interrupción
 void tic_PIT(void){
@@ -22,6 +24,7 @@ void tic_PIT(void){
     if (tick==50){
     	segundos++;
     	tick=0;
+
     }
     if (segundos==60){
     	segundos=0;
@@ -33,7 +36,7 @@ void tic_PIT(void){
     }
     sprintf(str,"%2d:%2d:%2d",horas,minutos,segundos);
     montrer(str,8);
-    
+    ordonnance();
 }
 void horloge(void){
 uint8_t masque=inb(0x21);
