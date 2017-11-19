@@ -68,6 +68,11 @@ void idle(void){
       cli();
     }
 }
+void fin_processus(){
+  t_Processus[actif].etat=MORT;
+  printf("[%i] %s est mort maintenant\n",actif,mon_nom());
+  ordonnance();
+}
 int32_t cree_processus(void (*code)(void), char *nom){
   if (na_processes==_PROCESS-1){
     return -1;
@@ -76,8 +81,9 @@ int32_t cree_processus(void (*code)(void), char *nom){
     na_processes++;
     t_Processus[na_processes].pid=na_processes;
     sprintf(t_Processus[na_processes].nom,"%s",nom);
-    t_Processus[na_processes].zone.esp=(uint32_t)(&t_Processus[na_processes].pile[511]);
-    t_Processus[na_processes].pile[511]=(uint32_t)(code);
+    t_Processus[na_processes].zone.esp=(uint32_t)(&t_Processus[na_processes].pile[510]);
+    t_Processus[na_processes].pile[510]=(uint32_t)(code);
+    t_Processus[na_processes].pile[511]=(uint32_t)(&fin_processus);
     t_Processus[na_processes].s_reveil=0;
     t_Processus[na_processes].etat=PRETE;
   return 0;
@@ -89,31 +95,28 @@ void dors(uint32_t nb_seconds){
   t_Processus[actif].etat=ENDORMI;
   ordonnance();
 }
-void fin_processus(){
-  t_Processus[actif].etat=MORT;
-  printf("[%i] %s est mort maintenant\n",mon_pid(),mon_nom());
-  ordonnance();
-}
+
 void proc1(void){
+
     for(int i=0;i<5;i++){
+      //t_Processus[actif].pile[511]=(uint32_t)(&fin_processus);
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(1);
     }
-    fin_processus();
 }
 void proc2(void){
     for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(2);
     }
-    fin_processus();
+    //fin_processus();
 }
 void proc3(void){
     for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(3);
     }
-    fin_processus();
+    //fin_processus();
 }
 
 void init(){
