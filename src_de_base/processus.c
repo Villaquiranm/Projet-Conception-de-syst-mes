@@ -5,7 +5,7 @@
 #include <segment.h>
 #include <string.h>
 extern void ctx_sw(int32_t *ancient,int32_t *nouveau);
-enum etat{ELU,PRETE,ENDORMI};
+enum etat{ELU,PRETE,ENDORMI,MORT};
 struct reg_type{
     int32_t ebx;
     uint32_t esp;
@@ -42,7 +42,7 @@ void ordonnance(){
         int32_t time = get_time();
         for (int i=1;i<na_processes+1;i++){
           //printf("%s\n",t_Processus[i].nom);
-          if (t_Processus[i].s_reveil<=time){
+          if (t_Processus[i].s_reveil<=time && t_Processus[i].etat!=MORT){
 
             t_Processus[i].etat=PRETE;
           }
@@ -56,7 +56,7 @@ void ordonnance(){
             actif++;
           }
           loop++;
-        } while(t_Processus[actif].etat==ENDORMI);
+        } while(t_Processus[actif].etat==ENDORMI || t_Processus[actif].etat==MORT);
             t_Processus[actif].etat=ELU;
             ctx_sw(&t_Processus[avant].zone.ebx,&t_Processus[actif].zone.ebx);
     }
@@ -89,23 +89,31 @@ void dors(uint32_t nb_seconds){
   t_Processus[actif].etat=ENDORMI;
   ordonnance();
 }
+void fin_processus(){
+  t_Processus[actif].etat=MORT;
+  printf("[%i] %s est mort maintenant\n",mon_pid(),mon_nom());
+  ordonnance();
+}
 void proc1(void){
-    for(;;){
+    for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(1);
     }
+    fin_processus();
 }
 void proc2(void){
-    for(;;){
+    for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(2);
     }
+    fin_processus();
 }
 void proc3(void){
-    for(;;){
+    for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(3);
     }
+    fin_processus();
 }
 
 void init(){
