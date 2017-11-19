@@ -74,18 +74,29 @@ void fin_processus(){
   ordonnance();
 }
 int32_t cree_processus(void (*code)(void), char *nom){
-  if (na_processes==_PROCESS-1){
+  int actual_process=na_processes;
+  for (size_t i = 1; i < na_processes; i++) {
+    if (t_Processus[i].etat==MORT){
+      actual_process=i;
+      break;
+    }
+  }
+  if (na_processes==_PROCESS-1 && actual_process==na_processes){
     return -1;
   }
   else{
-    na_processes++;
-    t_Processus[na_processes].pid=na_processes;
-    sprintf(t_Processus[na_processes].nom,"%s",nom);
-    t_Processus[na_processes].zone.esp=(uint32_t)(&t_Processus[na_processes].pile[510]);
-    t_Processus[na_processes].pile[510]=(uint32_t)(code);
-    t_Processus[na_processes].pile[511]=(uint32_t)(&fin_processus);
-    t_Processus[na_processes].s_reveil=0;
-    t_Processus[na_processes].etat=PRETE;
+    if (actual_process==na_processes) {
+      na_processes++;
+      actual_process=na_processes;
+    }
+
+    t_Processus[actual_process].pid=actual_process;
+    sprintf(t_Processus[actual_process].nom,"%s",nom);
+    t_Processus[actual_process].zone.esp=(uint32_t)(&t_Processus[actual_process].pile[510]);
+    t_Processus[actual_process].pile[510]=(uint32_t)(code);
+    t_Processus[actual_process].pile[511]=(uint32_t)(&fin_processus);
+    t_Processus[actual_process].s_reveil=0;
+    t_Processus[actual_process].etat=PRETE;
   return 0;
   }
 }
@@ -103,12 +114,14 @@ void proc1(void){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(1);
     }
+    cree_processus(&proc1,"proc1");
 }
 void proc2(void){
     for(int i=0;i<5;i++){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(2);
     }
+    cree_processus(&proc2,"proc2");
     //fin_processus();
 }
 void proc3(void){
@@ -116,6 +129,7 @@ void proc3(void){
       printf("[temps = %u] processus %s pid = %i\n", get_time(),mon_nom(), mon_pid());
       dors(3);
     }
+    cree_processus(&proc3,"proc3");
     //fin_processus();
 }
 
