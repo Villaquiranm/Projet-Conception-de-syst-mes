@@ -16,7 +16,7 @@ void efface_ecran (void){
 	uint16_t* ptr;
 
 	for (lige=0;lige<=24;lige++){
-		for (cole=0;cole<=79;cole++){	
+		for (cole=0;cole<=79;cole++){
 			ptr=ptr_mem(lige,cole);
 			*ptr=(0xf00u)|' ';
 		}
@@ -35,22 +35,27 @@ void place_curseur(uint32_t lig, uint32_t col){
 void traite_car(char ca){
 	uint32_t pos;
 		switch(ca){
-		case 1:
-			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
-			*/
-			if (c<80){
-				c=(c)+1;
+		/*case 1:
+			case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
+
+			if (l==24 && c==79){
+
 			}
 			else{
-				c=0;
-				l=(l)+1;
+				if (c<80){
+					c=(c)+1;
+				}
+				else{
+					c=0;
+					l=(l)+1;
+				}
+				place_curseur(l,c);
 			}
-			place_curseur(l,c);
-			break;
+			break;*/
 		case '\b':
 			/* Case dans le quel le curseur doit reculer
-			 * 		 * 
-	 		 * */				
+			 * 		 *
+	 		 * */
 			if (c==0){
 				c=79;
 				l=l-1;
@@ -60,7 +65,7 @@ void traite_car(char ca){
 			}
 			place_curseur(l,c);
 			break;
-		case '\t':									
+		case '\t':
 			/*Tabulación*/
 			pos=8*((c/8)+1);
 			if (pos<80){
@@ -71,20 +76,27 @@ void traite_car(char ca){
 			}
 			place_curseur(l,c);
 			break;
-		case '\n': 
-			/*Case dans le quel le curseur doit etre dans la ligne suivante*/
-			c=0;
-			l=l+1;
-			place_curseur(l,c);
+		case '\n':
+			if (l==24) {
+				defilement();
+				l=24;
+				c=0;
+			}
+			else{
+				c=0;
+				l=l+1;
+				place_curseur(l,c);
+			}
+
 			break;
-		case '\f': 
-			/*Case dans le quelle on efface l'ecran et on doit metre le punteur dans la ligne 0 cologne*/ 
+		case '\f':
+			/*Case dans le quelle on efface l'ecran et on doit metre le punteur dans la ligne 0 cologne*/
 			l=0;
 			c=0;
 			efface_ecran();
 			place_curseur(l,c);
 			break;
-		case '\r': 
+		case '\r':
 			/*Ligne actuelle, Cologne 0*/
 			c=0;
 			place_curseur(l,c);
@@ -92,8 +104,12 @@ void traite_car(char ca){
 		default:
 			/*case dans le quel le curseur doit etre dans la cologne suivante ex: ecrit un caractère
 			*/
-			if (c<80){
-				c=(c)+1;
+			if (c==79 && l==24) {
+				defilement();
+			}
+
+			if (c<79){
+				c++;
 			}
 			else{
 				c=0;
@@ -101,10 +117,22 @@ void traite_car(char ca){
 			}
 			ecrit_car(l,c,ca);
 			place_curseur(l,c+1);
-		}
+
+			}
+
+
 }
 void defilement(void){
-	memmove(ptr_mem(0,0),ptr_mem(1,0),(size_t)(24*80));	
+	memmove(ptr_mem(0,0),ptr_mem(1,0),(size_t)(24*80*2));
+	place_curseur(24,1);
+		for (uint32_t cole=0;cole<=79;cole++){
+			uint16_t *ptr=ptr_mem(24,cole);
+			*ptr=(0xf00u)|' ';
+		}
+		l=24;
+		c=1;
+
+
 }
 void console_putbytes(char *chaine,int32_t taille){
 	for (int i=0;i<taille;i++){

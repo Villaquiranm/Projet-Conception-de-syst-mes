@@ -14,13 +14,16 @@
 void kernel_start(void)
 {
     efface_ecran();
-//    console_putbytes("Holis \n \n \t Holis",17);
+    //defilement();
+
     init();
     frequence();
     horloge();
     init_traitant_IT(32,traitant_IT_32);
     idle();
-    
+    //sti();
+    //hlt();
+
 
     // quand on saura gerer l'ecran, on pourra afficher x
     // on ne doit jamais sortir de kernel_start
